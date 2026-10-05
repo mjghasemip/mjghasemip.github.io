@@ -2,7 +2,6 @@
 document.addEventListener('DOMContentLoaded', function () {
   var STEP = 10000;
   var amountInput = document.getElementById('amount-toman');
-  var rialValue = document.getElementById('rial-value');
   var payBtn = document.getElementById('pay-btn');
   var quickBtns = document.querySelectorAll('.quick-btn');
   var plusBtn = document.getElementById('amount-plus');
@@ -10,30 +9,48 @@ document.addEventListener('DOMContentLoaded', function () {
 
   var holdTimer = null;
   var holdInterval = null;
-  var holdDelay = 400; // ms before fast mode
-  var holdSpeed = 80;  // ms between steps when holding
+  var holdDelay = 400;
+  var holdSpeed = 80;
+
+  // تبدیل ارقام فارسی/عربی به انگلیسی
+  function toEnglishDigits(str) {
+    return String(str)
+      .replace(/[۰-۹]/g, function (d) {
+        return String(d.charCodeAt(0) - 1776);
+      })
+      .replace(/[٠-٩]/g, function (d) {
+        return String(d.charCodeAt(0) - 1632);
+      });
+  }
+
+  function parseAmount(str) {
+    var cleaned = toEnglishDigits(str).replace(/[^\d]/g, '');
+    return parseInt(cleaned, 10) || 0;
+  }
+
+  // نمایش با جداکننده سه‌رقمی فارسی
+  function formatAmountDisplay(num) {
+    if (!num || isNaN(num)) return '';
+    return Number(num).toLocaleString('fa-IR');
+  }
 
   function getAmount() {
-    return parseInt(amountInput.value, 10) || 0;
+    return parseAmount(amountInput.value);
   }
 
   function setAmount(val) {
     if (val < CONFIG.MIN_AMOUNT) val = CONFIG.MIN_AMOUNT;
-    // snap to step
     val = Math.round(val / STEP) * STEP;
     if (val < CONFIG.MIN_AMOUNT) val = CONFIG.MIN_AMOUNT;
-    amountInput.value = val;
+    amountInput.value = formatAmountDisplay(val);
     quickBtns.forEach(function (b) {
       b.classList.toggle('active', parseInt(b.getAttribute('data-amount'), 10) === val);
     });
-    updateRial();
+    updatePayBtn();
   }
 
-  function updateRial() {
-    var toman = getAmount();
-    var rial = toman * 10;
-    rialValue.textContent = formatNumber(rial);
-    payBtn.disabled = toman < CONFIG.MIN_AMOUNT;
+  function updatePayBtn() {
+    payBtn.disabled = getAmount() < CONFIG.MIN_AMOUNT;
   }
 
   function changeBy(delta) {
@@ -41,7 +58,7 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   function startHold(delta) {
-    changeBy(delta); // immediate first step
+    changeBy(delta);
     clearTimeout(holdTimer);
     clearInterval(holdInterval);
     holdTimer = setTimeout(function () {
@@ -58,7 +75,6 @@ document.addEventListener('DOMContentLoaded', function () {
     holdInterval = null;
   }
 
-  // Plus / Minus with hold-to-accelerate
   [plusBtn, minusBtn].forEach(function (btn) {
     if (!btn) return;
     var delta = btn.id === 'amount-plus' ? STEP : -STEP;
@@ -78,18 +94,41 @@ document.addEventListener('DOMContentLoaded', function () {
     btn.addEventListener('touchcancel', stopHold);
   });
 
-  // Prevent context menu on long press
   document.addEventListener('contextmenu', function (e) {
     if (e.target === plusBtn || e.target === minusBtn) e.preventDefault();
   });
 
+  // هنگام تایپ: فقط رقم نگه دار، جداکننده بزن
   amountInput.addEventListener('input', function () {
-    quickBtns.forEach(function (b) { b.classList.remove('active'); });
-    updateRial();
+    var n = parseAmount(amountInput.value);
+    var pos = amountInput.selectionStart;
+    var oldLen = amountInput.value.length;
+    if (n > 0) {
+      amountInput.value = formatAmountDisplay(n);
+    } else {
+      amountInput.value = '';
+    }
+    // تلاش برای حفظ مکان کرسر (تقریبی)
+    var newLen = amountInput.value.length;
+    try {
+      amountInput.setSelectionRange(
+        Math.max(0, pos + (newLen - oldLen)),
+        Math.max(0, pos + (newLen - oldLen))
+      );
+    } catch (e) {}
+    quickBtns.forEach(function (b) {
+      b.classList.remove('active');
+    });
+    updatePayBtn();
   });
 
-  amountInput.addEventListener('change', function () {
-    setAmount(getAmount());
+  amountInput.addEventListener('blur', function () {
+    var n = getAmount();
+    if (n > 0) setAmount(n);
+    else {
+      amountInput.value = '';
+      updatePayBtn();
+    }
   });
 
   quickBtns.forEach(function (btn) {
@@ -110,7 +149,5 @@ document.addEventListener('DOMContentLoaded', function () {
     window.location.href = 'pay.html';
   });
 
-  // initial
-  if (!amountInput.value) amountInput.value = STEP;
   setAmount(getAmount() || STEP);
 });

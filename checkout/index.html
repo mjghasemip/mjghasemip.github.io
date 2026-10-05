@@ -55,13 +55,13 @@
               <button type="button" id="amount-minus" class="stepper-btn" title="کاهش ۱۰ هزار" aria-label="کاهش">−</button>
               <div class="input-with-unit">
                 <input
-                  type="number"
+                  type="text"
                   id="amount-toman"
-                  min="10000"
-                  step="10000"
-                  value="10000"
-                  placeholder="مثلاً ۲۵۰۰۰۰"
-                  class="input"
+                  inputmode="numeric"
+                  value="۱۰٬۰۰۰"
+                  placeholder="مثلاً ۲۵۰٬۰۰۰"
+                  class="input amount-input-glow"
+                  autocomplete="off"
                 />
                 <span class="unit">تومان</span>
               </div>
@@ -70,13 +70,7 @@
             <p class="stepper-hint">هر کلیک ۱۰٬۰۰۰ تومان · نگه دارید برای سرعت بیشتر</p>
           </div>
 
-          <div class="rial-display" id="rial-display">
-            <span class="rial-label">معادل ریالی:</span>
-            <span class="rial-value" id="rial-value">۰</span>
-            <span class="rial-unit">ریال</span>
-          </div>
-
-          <div class="quick-amounts">
+<div class="quick-amounts">
             <button type="button" class="quick-btn" data-amount="250000">۲۵۰٬۰۰۰</button>
             <button type="button" class="quick-btn" data-amount="500000">۵۰۰٬۰۰۰</button>
             <button type="button" class="quick-btn" data-amount="1000000">۱٬۰۰۰٬۰۰۰</button>

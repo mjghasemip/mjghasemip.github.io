@@ -64,7 +64,21 @@
             </div>
             <div class="form-group">
               <label for="register-profession">حرفه <span class="label-optional">(اختیاری)</span></label>
-              <input type="text" id="register-profession" class="input" placeholder="مثلاً پزشک، مهندس، ..." />
+              <input type="text" id="register-profession" class="input" placeholder="بنکدار، مغازه‌دار، پزشک، ..." list="profession-list" />
+              <datalist id="profession-list">
+                <option value="بنکدار"></option>
+                <option value="مغازه‌دار"></option>
+                <option value="پزشک"></option>
+                <option value="مهندس"></option>
+                <option value="کارمند"></option>
+                <option value="آزاد"></option>
+              </datalist>
+              <div class="profession-chips">
+                <button type="button" class="chip" data-profession="بنکدار">بنکدار</button>
+                <button type="button" class="chip" data-profession="مغازه‌دار">مغازه‌دار</button>
+                <button type="button" class="chip" data-profession="پزشک">پزشک</button>
+                <button type="button" class="chip" data-profession="مهندس">مهندس</button>
+              </div>
             </div>
             <div id="register-error" class="form-error hidden"></div>
             <button type="submit" class="btn btn-primary btn-block">ثبت‌نام</button>

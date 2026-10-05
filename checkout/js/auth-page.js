@@ -19,6 +19,17 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
 
+
+  // Profession chips
+  document.querySelectorAll('.chip').forEach(function (chip) {
+    chip.addEventListener('click', function () {
+      var input = document.getElementById('register-profession');
+      if (input) input.value = chip.getAttribute('data-profession');
+      document.querySelectorAll('.chip').forEach(function (c) { c.classList.remove('active'); });
+      chip.classList.add('active');
+    });
+  });
+
   // Login — فقط شماره موبایل
   loginForm.addEventListener('submit', async function (e) {
     e.preventDefault();
