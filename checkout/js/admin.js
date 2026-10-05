@@ -1,11 +1,11 @@
 // ===== Admin Panel =====
 let selectedPaymentId = null;
+let profilesCache = {};
 
 document.addEventListener('DOMContentLoaded', async () => {
   const ok = await requireAdmin();
   if (!ok) return;
 
-  // Tabs
   document.querySelectorAll('.admin-tab').forEach((tab) => {
     tab.addEventListener('click', () => {
       document.querySelectorAll('.admin-tab').forEach((t) => t.classList.remove('active'));
@@ -17,12 +17,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   });
 
-  // Filters & refresh
   document.getElementById('status-filter').addEventListener('change', loadPayments);
   document.getElementById('refresh-payments').addEventListener('click', loadPayments);
   document.getElementById('refresh-users').addEventListener('click', loadUsers);
 
-  // Modal
   document.getElementById('modal-close').addEventListener('click', closeModal);
   document.querySelector('.modal-backdrop').addEventListener('click', closeModal);
   document.getElementById('approve-btn').addEventListener('click', () => updatePaymentStatus('approved'));
@@ -31,14 +29,46 @@ document.addEventListener('DOMContentLoaded', async () => {
   await loadPayments();
 });
 
+async function loadProfilesMap(userIds) {
+  const missing = userIds.filter((id) => id && !profilesCache[id]);
+  if (missing.length === 0) return profilesCache;
+
+  const { data, error } = await window.sb
+    .from('profiles')
+    .select('id, email, full_name, role')
+    .in('id', missing);
+
+  if (error) {
+    console.error('profiles load error:', error);
+    return profilesCache;
+  }
+
+  (data || []).forEach((p) => {
+    profilesCache[p.id] = p;
+  });
+  return profilesCache;
+}
+
+function profileLabel(userId) {
+  const p = profilesCache[userId];
+  if (!p) return '—';
+  return p.full_name || p.email || '—';
+}
+
+function profileEmail(userId) {
+  const p = profilesCache[userId];
+  return (p && p.email) || '—';
+}
+
 async function loadPayments() {
   const container = document.getElementById('payments-list');
   container.innerHTML = '<div class="loading-spinner"></div>';
 
   const filter = document.getElementById('status-filter').value;
+  // بدون join — FK به auth.users است نه profiles
   let query = window.sb
     .from('payments')
-    .select('*, profiles:user_id(email, full_name)')
+    .select('*')
     .order('created_at', { ascending: false });
 
   if (filter !== 'all') {
@@ -57,15 +87,18 @@ async function loadPayments() {
     return;
   }
 
+  const userIds = [...new Set(data.map((p) => p.user_id).filter(Boolean))];
+  await loadProfilesMap(userIds);
+
   container.innerHTML = data
     .map((p) => {
-      const userName = p.profiles?.full_name || p.profiles?.email || '—';
+      const userName = profileLabel(p.user_id);
       return `
         <div class="admin-item" data-id="${p.id}">
           <div class="admin-item-header">
             <div>
               <div class="admin-item-amount">${formatNumber(p.amount_toman)} تومان</div>
-              <div class="admin-item-meta">${userName} · ${formatDate(p.created_at)}</div>
+              <div class="admin-item-meta">${escapeHtml(userName)} · ${formatDate(p.created_at)}</div>
             </div>
             <span class="status-badge ${p.status}">${STATUS_LABELS[p.status]}</span>
           </div>
@@ -91,7 +124,7 @@ async function openPaymentModal(id) {
 
   const { data: p, error } = await window.sb
     .from('payments')
-    .select('*, profiles:user_id(email, full_name)')
+    .select('*')
     .eq('id', id)
     .single();
 
@@ -100,8 +133,9 @@ async function openPaymentModal(id) {
     return;
   }
 
-  const userName = p.profiles?.full_name || '—';
-  const userEmail = p.profiles?.email || '—';
+  await loadProfilesMap([p.user_id]);
+  const userName = profileLabel(p.user_id);
+  const userEmail = profileEmail(p.user_id);
 
   let receiptHtml = '';
   if (p.receipt_url) {
@@ -127,7 +161,6 @@ async function openPaymentModal(id) {
     ${receiptHtml}
   `;
 
-  // Show actions only if pending
   if (p.status === 'pending') {
     actions.classList.remove('hidden');
     noteGroup.classList.remove('hidden');
@@ -191,6 +224,11 @@ async function loadUsers() {
     container.innerHTML = `<p class="empty-state">کاربری یافت نشد.</p>`;
     return;
   }
+
+  // refresh cache
+  data.forEach((u) => {
+    profilesCache[u.id] = u;
+  });
 
   container.innerHTML = data
     .map(
