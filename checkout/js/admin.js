@@ -154,7 +154,7 @@ async function openPaymentModal(id) {
 
   body.innerHTML = `
     <p><strong>کاربر:</strong> ${escapeHtml(userName)} (${escapeHtml(userEmail)})</p>
-    <p><strong>مبلغ:</strong> <span style="direction: ltr; display: inline-block;">${formatNumber(p.amount_toman)} تومان</span> / ${formatNumber(p.amount_rial)} ریال</p>
+    <p><strong>مبلغ:</strong> <span style="direction: rtl; display: inline-block;">${formatNumber(p.amount_toman)} تومان</span></p>
     <p><strong>وضعیت:</strong> <span class="status-badge ${p.status}">${STATUS_LABELS[p.status]}</span></p>
     <p><strong>تاریخ ثبت:</strong> ${formatDate(p.created_at)}</p>
     ${p.admin_note ? `<p><strong>یادداشت قبلی:</strong> ${escapeHtml(p.admin_note)}</p>` : ''}

@@ -149,5 +149,5 @@ document.addEventListener('DOMContentLoaded', function () {
     window.location.href = 'pay.html';
   });
 
-  setAmount(getAmount() || STEP);
+  setAmount(getAmount() || CONFIG.DEFAULT_AMOUNT);
 });

@@ -65,7 +65,7 @@ async function showPaymentStatus(id, container) {
     <p class="status-desc">${desc}</p>
     <div class="status-badge ${status}">${STATUS_LABELS[status]}</div>
     <div style="margin-top: 1.25rem; font-size: 0.95rem; color: var(--text-secondary);">
-      <p>مبلغ: <strong style="color: var(--accent); direction: ltr; display: inline-block;">${formatNumber(payment.amount_toman)} تومان</strong></p>
+      <p>مبلغ: <strong style="color: var(--accent); direction: rtl; display: inline-block;">${formatNumber(payment.amount_toman)} تومان</strong></p>
       <p style="margin-top: 0.35rem;">تاریخ: ${formatDate(payment.created_at)}</p>
     </div>
     <a href="index.html" class="btn btn-outline" style="margin-top: 1.5rem;">پرداخت جدید</a>

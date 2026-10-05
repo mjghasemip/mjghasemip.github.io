@@ -11,6 +11,9 @@ const CONFIG = {
   // حداقل مبلغ (تومان)
   MIN_AMOUNT: 10000,
 
+  // مقدار اولیه مبلغ پرداخت (تومان)
+  DEFAULT_AMOUNT: 250000,
+
   // Storage bucket for receipts
   RECEIPTS_BUCKET: 'receipts',
 

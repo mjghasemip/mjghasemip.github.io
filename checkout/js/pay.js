@@ -14,8 +14,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Display amounts
   document.getElementById('pay-amount-toman').textContent =
     formatNumber(amountToman) + ' تومان';
-  document.getElementById('pay-amount-rial').textContent =
-    formatNumber(amountRial) + ' ریال';
 
   // Card details
   const formattedCard = formatCardNumber(CONFIG.CARD_NUMBER);

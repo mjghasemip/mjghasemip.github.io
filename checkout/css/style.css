@@ -431,33 +431,6 @@ body {
   pointer-events: none;
 }
 
-.rial-display {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.85rem 1rem;
-  background: var(--accent-light);
-  border-radius: var(--radius-sm);
-  margin-bottom: 1.25rem;
-  font-size: 0.95rem;
-}
-
-.rial-label {
-  color: var(--text-secondary);
-}
-
-.rial-value {
-  font-weight: 700;
-  color: var(--accent);
-  font-size: 1.15rem;
-  direction: ltr;
-}
-
-.rial-unit {
-  color: var(--text-muted);
-  font-size: 0.85rem;
-}
-
 .quick-amounts {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -601,7 +574,7 @@ body {
 .summary-row strong {
   color: var(--accent);
   font-size: 1.1rem;
-  direction: ltr;
+  direction: rtl;
 }
 
 /* Bank Card Visual */
@@ -863,7 +836,7 @@ body {
 
 .payment-item-amount {
   font-weight: 600;
-  direction: ltr;
+  direction: rtl;
   display: inline-block;
 }
 
@@ -960,7 +933,7 @@ body {
   font-weight: 700;
   font-size: 1.1rem;
   color: var(--accent);
-  direction: ltr;
+  direction: rtl;
 }
 
 /* Modal */
