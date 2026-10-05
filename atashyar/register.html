@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ثبت‌نام | آتش یار</title>
+  <link rel="icon" href="images/favicon.svg" type="image/svg+xml" />
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <header class="header" id="site-header"></header>
+
+  <main style="flex:1;display:flex;align-items:center;justify-content:center;padding:2rem 1rem">
+    <div class="login-box" style="width:100%;max-width:400px">
+      <div class="login-logo">
+        <div class="icon">🔥</div>
+        <h1>ایجاد حساب کاربری</h1>
+        <p>ثبت‌نام در آتش یار</p>
+      </div>
+
+      <form id="register-form">
+        <div class="form-group">
+          <label>نام و نام خانوادگی</label>
+          <input type="text" id="full_name" placeholder="اختیاری" />
+        </div>
+        <div class="form-group">
+          <label>ایمیل</label>
+          <input type="email" id="email" required dir="ltr" placeholder="email@example.com" />
+        </div>
+        <div class="form-group">
+          <label>رمز عبور</label>
+          <input type="password" id="password" required dir="ltr" minlength="6" placeholder="حداقل ۶ کاراکتر" />
+        </div>
+        <div class="form-group">
+          <label>تکرار رمز عبور</label>
+          <input type="password" id="password2" required dir="ltr" minlength="6" />
+        </div>
+        <div id="error-box" class="alert alert-error hidden"></div>
+        <div id="success-box" class="alert alert-success hidden"></div>
+        <button type="submit" class="btn btn-primary btn-full" id="submit-btn">ثبت‌نام</button>
+      </form>
+
+      <p style="text-align:center;margin-top:1.25rem;font-size:.9rem;color:var(--ash)">
+        قبلاً ثبت‌نام کرده‌اید؟
+        <a href="login.html" style="color:var(--primary);font-weight:600">ورود</a>
+      </p>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div>🔥 <strong>آگنی | آتش یار</strong></div>
+    <p>تمامی حقوق برای برند آگنی محفوظ است.</p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/config.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    Auth.renderHeader('site-header');
+
+    (async () => {
+      const user = await Auth.getUser();
+      if (user) location.href = 'account.html';
+    })();
+
+    document.getElementById('register-form').onsubmit = async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('submit-btn');
+      const err = document.getElementById('error-box');
+      const ok = document.getElementById('success-box');
+      err.classList.add('hidden');
+      ok.classList.add('hidden');
+
+      const pass = document.getElementById('password').value;
+      const pass2 = document.getElementById('password2').value;
+      if (pass !== pass2) {
+        err.textContent = 'رمز عبور و تکرار آن یکسان نیستند';
+        err.classList.remove('hidden');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span>';
+
+      try {
+        await Auth.signUp(
+          document.getElementById('email').value.trim(),
+          pass,
+          document.getElementById('full_name').value.trim()
+        );
+        ok.textContent = 'ثبت‌نام موفق! در حال انتقال...';
+        ok.classList.remove('hidden');
+        setTimeout(() => location.href = 'account.html', 1200);
+      } catch (ex) {
+        err.textContent = ex.message || 'خطا در ثبت‌نام';
+        err.classList.remove('hidden');
+        btn.disabled = false;
+        btn.textContent = 'ثبت‌نام';
+      }
+    };
+  </script>
+</body>
+</html>

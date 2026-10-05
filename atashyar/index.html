@@ -10,26 +10,9 @@
 </head>
 <body>
 
-  <!-- Header -->
-  <header class="header">
-    <div class="header-inner">
-      <a href="index.html" class="logo">
-        <span class="logo-icon">🔥</span>
-        <div>
-          <span class="logo-text">آتش یار</span>
-          <span class="logo-sub">ATASHYAR</span>
-        </div>
-      </a>
-      <nav class="nav">
-        <a href="#products">محصولات</a>
-        <a href="#about">درباره ما</a>
-        <a href="#contact">تماس</a>
-      </nav>
-    </div>
-  </header>
+  <header class="header" id="site-header"></header>
 
   <main>
-    <!-- Hero -->
     <section class="hero">
       <div class="hero-badge">🔥 آتش‌یار، آماده‌ی ماجراجویی</div>
       <h1>شروع گرمای بهتر <span>در دل طبیعت</span></h1>
@@ -37,7 +20,6 @@
       <a href="#products" class="btn btn-primary">مشاهده محصولات</a>
     </section>
 
-    <!-- About -->
     <section id="about" class="section">
       <div class="container">
         <h2 class="section-title">درباره آگنی</h2>
@@ -55,17 +37,13 @@
       </div>
     </section>
 
-    <!-- Products -->
     <section id="products" class="section" style="background:rgba(255,255,255,.5)">
       <div class="container">
         <h2 class="section-title">محصولات آگنی</h2>
-        <div class="products-grid" id="products-list">
-          <!-- filled by JS -->
-        </div>
+        <div class="products-grid" id="products-list"></div>
       </div>
     </section>
 
-    <!-- Contact -->
     <section id="contact" class="section">
       <div class="container" style="text-align:center;max-width:600px">
         <h2 class="section-title">آتشِ ارتباط را روشن کنید!</h2>
@@ -85,27 +63,29 @@
     <p>شروع گرمای بهتر در دل طبیعت</p>
   </footer>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/config.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/auth.js"></script>
   <script>
-    // Render products
+    Auth.renderHeader('site-header');
+
     const list = document.getElementById('products-list');
     PRODUCTS.forEach(p => {
-      const imgHtml = p.image
-        ? `<img src="${p.image}" alt="${p.name}" />`
-        : '🔥';
-      const badge = p.badge ? `<span class="badge">${p.badge}</span>` : '';
-      list.innerHTML += `
-        <div class="product-card">
-          <div class="product-img">${imgHtml}${badge}</div>
-          <div class="product-body">
-            <h3>${p.name}</h3>
-            <p>${p.description}</p>
-            <div class="product-footer">
-              <span class="price">${formatPrice(p.price)}</span>
-              <a href="checkout.html?product=${p.id}" class="btn btn-dark btn-sm">مشاهده و سفارش</a>
-            </div>
-          </div>
-        </div>`;
+      const imgHtml = p.image ? '<img src="' + p.image + '" alt="' + p.name + '" />' : '🔥';
+      const badge = p.badge ? '<span class="badge">' + p.badge + '</span>' : '';
+      list.innerHTML +=
+        '<div class="product-card">' +
+          '<div class="product-img">' + imgHtml + badge + '</div>' +
+          '<div class="product-body">' +
+            '<h3>' + p.name + '</h3>' +
+            '<p>' + p.description + '</p>' +
+            '<div class="product-footer">' +
+              '<span class="price">' + formatPrice(p.price) + '</span>' +
+              '<a href="checkout.html?product=' + p.id + '" class="btn btn-dark btn-sm">مشاهده و سفارش</a>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
     });
   </script>
 </body>

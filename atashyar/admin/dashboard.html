@@ -54,15 +54,22 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="../js/config.js"></script>
   <script src="../js/supabase-client.js"></script>
+  <script src="../js/auth.js"></script>
   <script>
     let currentFilter = 'all';
     let selectedOrder = null;
     const sb = getSupabase();
 
-    // Auth check
+    // Auth check — must be admin
     (async () => {
-      const { data: { session } } = await sb.auth.getSession();
-      if (!session) { location.href = 'index.html'; return; }
+      const user = await Auth.getUser();
+      if (!user) { location.href = '../login.html'; return; }
+      const isAdmin = await Auth.isAdmin();
+      if (!isAdmin) {
+        alert('دسترسی فقط برای ادمین');
+        location.href = '../account.html';
+        return;
+      }
       loadOrders();
     })();
 

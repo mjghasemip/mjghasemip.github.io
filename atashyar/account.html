@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>حساب کاربری | آتش یار</title>
+  <link rel="icon" href="images/favicon.svg" type="image/svg+xml" />
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <header class="header" id="site-header"></header>
+
+  <main style="padding:2.5rem 0;flex:1">
+    <div class="container-sm">
+      <h1 class="page-title">حساب کاربری</h1>
+      <p class="page-sub" id="user-email"></p>
+
+      <div class="summary-card" id="profile-card" style="margin-bottom:2rem">
+        <div style="color:var(--ash);font-size:.9rem">در حال بارگذاری...</div>
+      </div>
+
+      <h2 style="font-size:1.2rem;font-weight:700;margin-bottom:1rem" id="orders">سفارش‌های من</h2>
+      <div id="orders-list">
+        <div style="text-align:center;padding:2rem;color:var(--ash)">در حال بارگذاری...</div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div>🔥 <strong>آگنی | آتش یار</strong></div>
+    <p>تمامی حقوق برای برند آگنی محفوظ است.</p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/config.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    (async () => {
+      await Auth.renderHeader('site-header');
+      const user = await Auth.getUser();
+      if (!user) { location.href = 'login.html'; return; }
+
+      const profile = await Auth.getProfile();
+      document.getElementById('user-email').textContent = user.email;
+
+      document.getElementById('profile-card').innerHTML = `
+        <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1rem">
+          <div class="header-avatar" style="width:48px;height:48px;font-size:1.2rem;color:white">
+            ${((profile?.full_name || user.email)[0] || 'U').toUpperCase()}
+          </div>
+          <div>
+            <div style="font-weight:700">${profile?.full_name || 'کاربر'}</div>
+            <div style="font-size:.85rem;color:var(--ash)">${user.email}</div>
+            ${profile?.role === 'admin' ? '<span class="status-badge status-approved" style="margin-top:.35rem;display:inline-block">ادمین</span>' : ''}
+          </div>
+        </div>
+        ${profile?.role === 'admin' ? '<a href="admin/dashboard.html" class="btn btn-dark btn-sm">ورود به پنل ادمین</a>' : ''}
+      `;
+
+      // سفارش‌های کاربر (بر اساس user_id یا email/phone)
+      const sb = getSupabase();
+      let query = sb.from('orders').select('*').order('created_at', { ascending: false });
+
+      // اگر ستون user_id وجود دارد
+      const { data: byUser, error: e1 } = await sb
+        .from('orders')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+
+      let orders = byUser || [];
+      if (e1 || orders.length === 0) {
+        // fallback: همه سفارش‌هایی که ایمیل در notes نیست — فقط اگر user_id ست شده
+      }
+
+      const list = document.getElementById('orders-list');
+      if (!orders.length) {
+        list.innerHTML = `
+          <div class="summary-card" style="text-align:center;color:var(--ash)">
+            هنوز سفارشی ثبت نکرده‌اید.
+            <div style="margin-top:1rem">
+              <a href="index.html#products" class="btn btn-primary btn-sm">مشاهده محصولات</a>
+            </div>
+          </div>`;
+        return;
+      }
+
+      const statusLabel = { pending: 'در انتظار', approved: 'تأیید شده', rejected: 'رد شده' };
+      const statusClass = { pending: 'status-pending', approved: 'status-approved', rejected: 'status-rejected' };
+
+      list.innerHTML = orders.map(o => `
+        <div class="order-card">
+          <div class="order-top">
+            <div>
+              <strong>${o.product_name}</strong>
+              <div style="font-size:.85rem;color:var(--ash)">تعداد: ${o.quantity} — ${formatPrice(o.total_price)}</div>
+            </div>
+            <span class="status-badge ${statusClass[o.status]}">${statusLabel[o.status]}</span>
+          </div>
+          <div style="font-size:.8rem;color:var(--ash)">
+            ${new Date(o.created_at).toLocaleString('fa-IR')}
+          </div>
+        </div>
+      `).join('');
+    })();
+  </script>
+</body>
+</html>

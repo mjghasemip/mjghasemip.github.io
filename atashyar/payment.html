@@ -10,17 +10,7 @@
 </head>
 <body>
 
-  <header class="header">
-    <div class="header-inner">
-      <a href="index.html" class="logo">
-        <span class="logo-icon">🔥</span>
-        <div>
-          <span class="logo-text">آتش یار</span>
-          <span class="logo-sub">ATASHYAR</span>
-        </div>
-      </a>
-    </div>
-  </header>
+  <header class="header" id="site-header"></header>
 
   <main style="padding:2.5rem 0;flex:1">
     <div class="container-xs" id="payment-content">
@@ -37,7 +27,9 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/config.js"></script>
   <script src="js/supabase-client.js"></script>
+  <script src="js/auth.js"></script>
   <script>
+    Auth.renderHeader('site-header');
     const orderJson = sessionStorage.getItem('pendingOrder');
     if (!orderJson) {
       location.href = 'index.html';
@@ -176,6 +168,7 @@
 
           const { data: urlData } = sb.storage.from('receipts').getPublicUrl(fileName);
 
+          const user = await Auth.getUser();
           const { error: insErr } = await sb.from('orders').insert({
             customer_name: order.name || null,
             phone: order.phone || null,
@@ -190,6 +183,7 @@
             total_price: order.totalPrice,
             receipt_url: urlData.publicUrl,
             status: 'pending',
+            user_id: user ? user.id : null,
           });
           if (insErr) throw insErr;
 

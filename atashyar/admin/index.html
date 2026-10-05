@@ -36,12 +36,16 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="../js/config.js"></script>
   <script src="../js/supabase-client.js"></script>
+  <script src="../js/auth.js"></script>
   <script>
     // اگر قبلاً لاگین کرده، مستقیم برو داشبورد
     (async () => {
       const sb = getSupabase();
       const { data: { session } } = await sb.auth.getSession();
-      if (session) location.href = 'dashboard.html';
+      if (session) {
+        const isAdmin = await Auth.isAdmin();
+        location.href = isAdmin ? 'dashboard.html' : '../account.html';
+      }
     })();
 
     document.getElementById('login-form').onsubmit = async (e) => {
