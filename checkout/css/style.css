@@ -309,6 +309,53 @@ body {
   margin-bottom: 1.25rem;
 }
 
+.amount-stepper {
+  display: flex;
+  align-items: stretch;
+  gap: 0.5rem;
+}
+
+.amount-stepper .input-with-unit {
+  flex: 1;
+}
+
+.stepper-btn {
+  width: 48px;
+  min-width: 48px;
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1;
+  font-family: inherit;
+  background: var(--bg-primary);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all var(--transition);
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+.stepper-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-light);
+}
+
+.stepper-btn:active {
+  transform: scale(0.95);
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+
+.stepper-hint {
+  margin-top: 0.4rem;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
 .amount-input-group label {
   display: block;
   font-weight: 500;

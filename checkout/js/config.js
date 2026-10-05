@@ -9,7 +9,7 @@ const CONFIG = {
   CARD_BANK: 'بانک ملت',
 
   // حداقل مبلغ (تومان)
-  MIN_AMOUNT: 1000,
+  MIN_AMOUNT: 10000,
 
   // Storage bucket for receipts
   RECEIPTS_BUCKET: 'receipts',
