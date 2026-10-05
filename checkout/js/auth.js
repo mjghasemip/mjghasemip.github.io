@@ -2,21 +2,35 @@
 let currentUser = null;
 let currentProfile = null;
 
+function getSb() {
+  if (!window.sb) {
+    throw new Error('Supabase client not initialized');
+  }
+  return window.sb;
+}
+
 async function getSession() {
-  const { data: { session } } = await supabase.auth.getSession();
+  const { data: { session } } = await getSb().auth.getSession();
   return session;
 }
 
 async function getCurrentUser() {
-  const session = await getSession();
-  if (!session) {
+  try {
+    const session = await getSession();
+    if (!session) {
+      currentUser = null;
+      currentProfile = null;
+      return null;
+    }
+    currentUser = session.user;
+    await loadProfile();
+    return currentUser;
+  } catch (err) {
+    console.error('getCurrentUser error:', err);
     currentUser = null;
     currentProfile = null;
     return null;
   }
-  currentUser = session.user;
-  await loadProfile();
-  return currentUser;
 }
 
 async function loadProfile() {
@@ -24,17 +38,23 @@ async function loadProfile() {
     currentProfile = null;
     return null;
   }
-  const { data, error } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', currentUser.id)
-    .single();
+  try {
+    const { data, error } = await getSb()
+      .from('profiles')
+      .select('*')
+      .eq('id', currentUser.id)
+      .single();
 
-  if (error && error.code !== 'PGRST116') {
-    console.error('Profile load error:', error);
+    if (error && error.code !== 'PGRST116') {
+      console.error('Profile load error:', error);
+    }
+    currentProfile = data || null;
+    return currentProfile;
+  } catch (err) {
+    console.error('loadProfile error:', err);
+    currentProfile = null;
+    return null;
   }
-  currentProfile = data || null;
-  return currentProfile;
 }
 
 function isAdmin() {
@@ -42,19 +62,17 @@ function isAdmin() {
 }
 
 async function signUp(email, password, fullName) {
-  const { data, error } = await supabase.auth.signUp({
+  const { data, error } = await getSb().auth.signUp({
     email,
     password,
     options: {
       data: { full_name: fullName },
-      // No email confirmation required (must be disabled in Supabase dashboard too)
     },
   });
   if (error) throw error;
 
-  // Create profile
   if (data.user) {
-    await supabase.from('profiles').upsert({
+    await getSb().from('profiles').upsert({
       id: data.user.id,
       email: email,
       full_name: fullName,
@@ -65,7 +83,7 @@ async function signUp(email, password, fullName) {
 }
 
 async function signIn(email, password) {
-  const { data, error } = await supabase.auth.signInWithPassword({
+  const { data, error } = await getSb().auth.signInWithPassword({
     email,
     password,
   });
@@ -74,14 +92,13 @@ async function signIn(email, password) {
 }
 
 async function signOut() {
-  const { error } = await supabase.auth.signOut();
+  const { error } = await getSb().auth.signOut();
   if (error) throw error;
   currentUser = null;
   currentProfile = null;
   window.location.href = 'index.html';
 }
 
-// Update UI based on auth state
 async function updateAuthUI() {
   await getCurrentUser();
 
@@ -112,8 +129,8 @@ async function updateAuthUI() {
   }
 }
 
-// Require auth - redirect if not logged in
-async function requireAuth(redirectTo = 'auth.html') {
+async function requireAuth(redirectTo) {
+  redirectTo = redirectTo || 'auth.html';
   const user = await getCurrentUser();
   if (!user) {
     window.location.href = redirectTo;
@@ -122,7 +139,6 @@ async function requireAuth(redirectTo = 'auth.html') {
   return true;
 }
 
-// Require admin
 async function requireAdmin() {
   const ok = await requireAuth();
   if (!ok) return false;
@@ -134,12 +150,14 @@ async function requireAdmin() {
   return true;
 }
 
-// Init on every page
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', function () {
   updateAuthUI();
 
-  // Listen for auth changes
-  supabase.auth.onAuthStateChange(() => {
-    updateAuthUI();
-  });
+  try {
+    getSb().auth.onAuthStateChange(function () {
+      updateAuthUI();
+    });
+  } catch (err) {
+    console.error('onAuthStateChange error:', err);
+  }
 });

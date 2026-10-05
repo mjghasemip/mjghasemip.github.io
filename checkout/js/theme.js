@@ -1,11 +1,12 @@
 // ===== Theme Toggle =====
 (function () {
-  const STORAGE_KEY = 'atashyar-theme';
+  var STORAGE_KEY = 'atashyar-theme';
 
   function getPreferredTheme() {
-    const stored = localStorage.getItem(STORAGE_KEY);
+    var stored = localStorage.getItem(STORAGE_KEY);
     if (stored) return stored;
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    // Default: dark
+    return 'dark';
   }
 
   function applyTheme(theme) {
@@ -13,16 +14,15 @@
     localStorage.setItem(STORAGE_KEY, theme);
   }
 
-  // Apply on load
+  // Apply as early as possible
   applyTheme(getPreferredTheme());
 
-  // Toggle button
-  document.addEventListener('DOMContentLoaded', () => {
-    const btn = document.getElementById('theme-toggle');
+  document.addEventListener('DOMContentLoaded', function () {
+    var btn = document.getElementById('theme-toggle');
     if (!btn) return;
 
-    btn.addEventListener('click', () => {
-      const current = document.documentElement.getAttribute('data-theme') || 'light';
+    btn.addEventListener('click', function () {
+      var current = document.documentElement.getAttribute('data-theme') || 'dark';
       applyTheme(current === 'dark' ? 'light' : 'dark');
     });
   });

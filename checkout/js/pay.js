@@ -92,13 +92,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Upload to Supabase Storage
         const ext = file.name.split('.').pop() || 'jpg';
         const fileName = `${currentUser.id}/${Date.now()}.${ext}`;
-        const { error: uploadError } = await supabase.storage
+        const { error: uploadError } = await window.sb.storage
           .from(CONFIG.RECEIPTS_BUCKET)
           .upload(fileName, file, { contentType: file.type, upsert: false });
 
         if (uploadError) throw uploadError;
 
-        const { data: urlData } = supabase.storage
+        const { data: urlData } = window.sb.storage
           .from(CONFIG.RECEIPTS_BUCKET)
           .getPublicUrl(fileName);
 
@@ -111,7 +111,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
 
       // Insert payment record
-      const { data: payment, error: insertError } = await supabase
+      const { data: payment, error: insertError } = await window.sb
         .from('payments')
         .insert({
           user_id: currentUser.id,

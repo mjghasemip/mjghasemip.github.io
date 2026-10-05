@@ -36,7 +36,7 @@ async function loadPayments() {
   container.innerHTML = '<div class="loading-spinner"></div>';
 
   const filter = document.getElementById('status-filter').value;
-  let query = supabase
+  let query = window.sb
     .from('payments')
     .select('*, profiles:user_id(email, full_name)')
     .order('created_at', { ascending: false });
@@ -89,7 +89,7 @@ async function openPaymentModal(id) {
   body.innerHTML = '<div class="loading-spinner"></div>';
   modal.classList.remove('hidden');
 
-  const { data: p, error } = await supabase
+  const { data: p, error } = await window.sb
     .from('payments')
     .select('*, profiles:user_id(email, full_name)')
     .eq('id', id)
@@ -147,7 +147,7 @@ async function updatePaymentStatus(status) {
   approveBtn.disabled = true;
   rejectBtn.disabled = true;
 
-  const { error } = await supabase
+  const { error } = await window.sb
     .from('payments')
     .update({
       status,
@@ -177,7 +177,7 @@ async function loadUsers() {
   const container = document.getElementById('users-list');
   container.innerHTML = '<div class="loading-spinner"></div>';
 
-  const { data, error } = await supabase
+  const { data, error } = await window.sb
     .from('profiles')
     .select('*')
     .order('created_at', { ascending: false });
@@ -217,7 +217,7 @@ async function loadUsers() {
     btn.addEventListener('click', async (e) => {
       e.stopPropagation();
       if (!confirm('این کاربر را به ادمین تبدیل می‌کنید؟')) return;
-      const { error } = await supabase
+      const { error } = await window.sb
         .from('profiles')
         .update({ role: 'admin' })
         .eq('id', btn.dataset.id);

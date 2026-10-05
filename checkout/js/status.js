@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 async function showPaymentStatus(id, container) {
-  const { data: payment, error } = await supabase
+  const { data: payment, error } = await window.sb
     .from('payments')
     .select('*')
     .eq('id', id)
@@ -73,7 +73,7 @@ async function showPaymentStatus(id, container) {
 }
 
 async function loadMyPayments(container) {
-  const { data: payments, error } = await supabase
+  const { data: payments, error } = await window.sb
     .from('payments')
     .select('*')
     .eq('user_id', currentUser.id)
