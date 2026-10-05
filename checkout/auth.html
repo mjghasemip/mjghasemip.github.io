@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ورود / ثبت‌نام | آتش‌یار</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div class="bg-pattern"></div>
+
+  <header class="header">
+    <div class="container header-inner">
+      <a href="index.html" class="logo">
+        <span class="logo-icon">🔥</span>
+        <span class="logo-text">آتش‌یار</span>
+      </a>
+      <nav class="nav">
+        <button id="theme-toggle" class="btn-icon" title="تغییر تم">
+          <span class="theme-icon-light">☀️</span>
+          <span class="theme-icon-dark">🌙</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="main">
+    <section class="auth-section">
+      <div class="container">
+        <div class="card auth-card">
+          <div class="auth-tabs">
+            <button class="auth-tab active" data-tab="login">ورود</button>
+            <button class="auth-tab" data-tab="register">ثبت‌نام</button>
+          </div>
+
+          <!-- Login Form -->
+          <form id="login-form" class="auth-form">
+            <h2 class="card-title">ورود به حساب</h2>
+            <div class="form-group">
+              <label for="login-email">ایمیل</label>
+              <input type="email" id="login-email" class="input" required placeholder="example@email.com" dir="ltr" />
+            </div>
+            <div class="form-group">
+              <label for="login-password">رمز عبور</label>
+              <input type="password" id="login-password" class="input" required minlength="6" placeholder="حداقل ۶ کاراکتر" dir="ltr" />
+            </div>
+            <div id="login-error" class="form-error hidden"></div>
+            <button type="submit" class="btn btn-primary btn-block">ورود</button>
+          </form>
+
+          <!-- Register Form -->
+          <form id="register-form" class="auth-form hidden">
+            <h2 class="card-title">ثبت‌نام</h2>
+            <div class="form-group">
+              <label for="register-name">نام و نام خانوادگی</label>
+              <input type="text" id="register-name" class="input" required placeholder="نام کامل" />
+            </div>
+            <div class="form-group">
+              <label for="register-email">ایمیل</label>
+              <input type="email" id="register-email" class="input" required placeholder="example@email.com" dir="ltr" />
+            </div>
+            <div class="form-group">
+              <label for="register-password">رمز عبور</label>
+              <input type="password" id="register-password" class="input" required minlength="6" placeholder="حداقل ۶ کاراکتر" dir="ltr" />
+            </div>
+            <div id="register-error" class="form-error hidden"></div>
+            <button type="submit" class="btn btn-primary btn-block">ثبت‌نام</button>
+            <p class="form-hint">نیازی به تأیید ایمیل نیست. بلافاصله وارد می‌شوید.</p>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>تمامی حقوق برای برند آتش‌یار محفوظ است.</p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/config.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/auth-page.js"></script>
+</body>
+</html>

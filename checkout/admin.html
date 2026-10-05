@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>پنل ادمین | آتش‌یار</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div class="bg-pattern"></div>
+
+  <header class="header">
+    <div class="container header-inner">
+      <a href="index.html" class="logo">
+        <span class="logo-icon">🔥</span>
+        <span class="logo-text">آتش‌یار</span>
+      </a>
+      <nav class="nav">
+        <button id="theme-toggle" class="btn-icon" title="تغییر تم">
+          <span class="theme-icon-light">☀️</span>
+          <span class="theme-icon-dark">🌙</span>
+        </button>
+        <div id="user-menu" class="user-menu hidden">
+          <span id="user-email" class="user-email"></span>
+          <a href="index.html" class="btn btn-sm btn-outline">صفحه اصلی</a>
+          <button id="logout-btn" class="btn btn-sm btn-ghost">خروج</button>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main class="main">
+    <section class="admin-section">
+      <div class="container">
+        <h1 class="page-title">پنل مدیریت</h1>
+
+        <div class="admin-tabs">
+          <button class="admin-tab active" data-tab="payments">پرداخت‌ها</button>
+          <button class="admin-tab" data-tab="users">کاربران</button>
+        </div>
+
+        <!-- Payments Tab -->
+        <div id="payments-tab" class="admin-tab-content">
+          <div class="filters">
+            <select id="status-filter" class="input select">
+              <option value="all">همه وضعیت‌ها</option>
+              <option value="pending">در انتظار</option>
+              <option value="approved">تأیید شده</option>
+              <option value="rejected">رد شده</option>
+            </select>
+            <button id="refresh-payments" class="btn btn-outline">بروزرسانی</button>
+          </div>
+
+          <div id="payments-list" class="admin-list">
+            <div class="loading-spinner"></div>
+          </div>
+        </div>
+
+        <!-- Users Tab -->
+        <div id="users-tab" class="admin-tab-content hidden">
+          <div class="filters">
+            <button id="refresh-users" class="btn btn-outline">بروزرسانی</button>
+          </div>
+          <div id="users-list" class="admin-list">
+            <div class="loading-spinner"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modal for payment detail -->
+  <div id="payment-modal" class="modal hidden">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content">
+      <button class="modal-close" id="modal-close">&times;</button>
+      <h3 class="modal-title">جزئیات پرداخت</h3>
+      <div id="modal-body"></div>
+      <div class="modal-actions" id="modal-actions">
+        <button id="approve-btn" class="btn btn-success">تأیید</button>
+        <button id="reject-btn" class="btn btn-danger">رد</button>
+      </div>
+      <div class="form-group" id="admin-note-group">
+        <label for="admin-note">یادداشت ادمین (اختیاری)</label>
+        <textarea id="admin-note" class="input textarea" rows="2" placeholder="توضیح برای کاربر..."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      <p>تمامی حقوق برای برند آتش‌یار محفوظ است.</p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/config.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>

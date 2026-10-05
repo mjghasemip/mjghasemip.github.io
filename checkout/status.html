@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>وضعیت پرداخت | آتش‌یار</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div class="bg-pattern"></div>
+
+  <header class="header">
+    <div class="container header-inner">
+      <a href="index.html" class="logo">
+        <span class="logo-icon">🔥</span>
+        <span class="logo-text">آتش‌یار</span>
+      </a>
+      <nav class="nav">
+        <button id="theme-toggle" class="btn-icon" title="تغییر تم">
+          <span class="theme-icon-light">☀️</span>
+          <span class="theme-icon-dark">🌙</span>
+        </button>
+        <div id="user-menu" class="user-menu hidden">
+          <span id="user-email" class="user-email"></span>
+          <button id="logout-btn" class="btn btn-sm btn-ghost">خروج</button>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main class="main">
+    <section class="status-section">
+      <div class="container">
+        <div class="card status-card">
+          <div id="status-content">
+            <div class="loading-spinner"></div>
+            <p>در حال بارگذاری...</p>
+          </div>
+        </div>
+
+        <div class="card my-payments-card" id="my-payments-card">
+          <h3 class="card-title">پرداخت‌های من</h3>
+          <div id="my-payments-list" class="payments-list">
+            <p class="empty-state">هنوز پرداختی ثبت نشده است.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>تمامی حقوق برای برند آتش‌یار محفوظ است.</p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/config.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/status.js"></script>
+</body>
+</html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>درگاه پرداخت | آتش‌یار</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div class="bg-pattern"></div>
+
+  <header class="header">
+    <div class="container header-inner">
+      <a href="index.html" class="logo">
+        <span class="logo-icon">🔥</span>
+        <span class="logo-text">آتش‌یار</span>
+      </a>
+      <nav class="nav">
+        <button id="theme-toggle" class="btn-icon" title="تغییر تم">
+          <span class="theme-icon-light">☀️</span>
+          <span class="theme-icon-dark">🌙</span>
+        </button>
+        <div id="user-menu" class="user-menu hidden">
+          <span id="user-email" class="user-email"></span>
+          <a href="admin.html" id="admin-link" class="btn btn-sm btn-outline hidden">پنل ادمین</a>
+          <button id="logout-btn" class="btn btn-sm btn-ghost">خروج</button>
+        </div>
+        <div id="auth-buttons">
+          <a href="auth.html" class="btn btn-primary">ورود / ثبت‌نام</a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main class="main">
+    <section class="hero">
+      <div class="container">
+        <h1 class="hero-title">شروع گرمای بهتر</h1>
+        <p class="hero-subtitle">پرداخت امن و سریع کارت‌به‌کارت</p>
+      </div>
+    </section>
+
+    <section class="payment-section" id="payment-section">
+      <div class="container">
+        <div class="card payment-card">
+          <h2 class="card-title">انتخاب مبلغ پرداخت</h2>
+          <p class="card-desc">مبلغ مورد نظر را به تومان وارد کنید</p>
+
+          <div class="amount-input-group">
+            <label for="amount-toman">مبلغ (تومان)</label>
+            <div class="input-with-unit">
+              <input
+                type="number"
+                id="amount-toman"
+                min="1000"
+                step="1000"
+                placeholder="مثلاً ۵۰۰۰۰"
+                class="input"
+              />
+              <span class="unit">تومان</span>
+            </div>
+          </div>
+
+          <div class="rial-display" id="rial-display">
+            <span class="rial-label">معادل ریالی:</span>
+            <span class="rial-value" id="rial-value">۰</span>
+            <span class="rial-unit">ریال</span>
+          </div>
+
+          <div class="quick-amounts">
+            <button type="button" class="quick-btn" data-amount="50000">۵۰,۰۰۰</button>
+            <button type="button" class="quick-btn" data-amount="100000">۱۰۰,۰۰۰</button>
+            <button type="button" class="quick-btn" data-amount="200000">۲۰۰,۰۰۰</button>
+            <button type="button" class="quick-btn" data-amount="500000">۵۰۰,۰۰۰</button>
+          </div>
+
+          <button id="pay-btn" class="btn btn-primary btn-lg btn-block" disabled>
+            پرداخت
+          </button>
+
+          <p class="login-hint" id="login-hint">
+            برای پرداخت ابتدا <a href="auth.html">وارد شوید</a> یا ثبت‌نام کنید.
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>تمامی حقوق برای برند آتش‌یار محفوظ است.</p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/config.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/index.js"></script>
+</body>
+</html>

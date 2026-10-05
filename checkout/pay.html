@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>پرداخت کارت‌به‌کارت | آتش‌یار</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div class="bg-pattern"></div>
+
+  <header class="header">
+    <div class="container header-inner">
+      <a href="index.html" class="logo">
+        <span class="logo-icon">🔥</span>
+        <span class="logo-text">آتش‌یار</span>
+      </a>
+      <nav class="nav">
+        <button id="theme-toggle" class="btn-icon" title="تغییر تم">
+          <span class="theme-icon-light">☀️</span>
+          <span class="theme-icon-dark">🌙</span>
+        </button>
+        <div id="user-menu" class="user-menu hidden">
+          <span id="user-email" class="user-email"></span>
+          <button id="logout-btn" class="btn btn-sm btn-ghost">خروج</button>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main class="main">
+    <section class="pay-section">
+      <div class="container">
+        <div class="card pay-card">
+          <h2 class="card-title">پرداخت کارت‌به‌کارت</h2>
+          
+          <div class="amount-summary">
+            <div class="summary-row">
+              <span>مبلغ:</span>
+              <strong id="pay-amount-toman">۰ تومان</strong>
+            </div>
+            <div class="summary-row">
+              <span>معادل:</span>
+              <strong id="pay-amount-rial">۰ ریال</strong>
+            </div>
+          </div>
+
+          <div class="bank-card-visual">
+            <div class="bank-card">
+              <div class="bank-card-chip"></div>
+              <div class="bank-card-number" id="card-number-display">۶۱۰۴-۳۳۸۹-۴۶۵۸-۵۲۴۳</div>
+              <div class="bank-card-owner" id="card-owner-display">محمدجواد قاسمی پاریزی</div>
+              <div class="bank-card-bank">بانک ملت</div>
+            </div>
+          </div>
+
+          <div class="card-info-box">
+            <p><strong>شماره کارت:</strong> <span id="card-number-text" dir="ltr">6104-3389-4658-5243</span>
+              <button type="button" class="btn-copy" data-copy="6104338946585243" title="کپی">📋</button>
+            </p>
+            <p><strong>صاحب کارت:</strong> <span id="card-owner-text">محمدجواد قاسمی پاریزی</span></p>
+            <p class="card-hint">مبلغ دقیق را به این کارت واریز کنید و سپس فیش را آپلود نمایید.</p>
+          </div>
+
+          <form id="receipt-form">
+            <div class="form-group">
+              <label>نوع فیش</label>
+              <div class="radio-group">
+                <label class="radio-label">
+                  <input type="radio" name="receipt-type" value="image" checked />
+                  <span>تصویر فیش</span>
+                </label>
+                <label class="radio-label">
+                  <input type="radio" name="receipt-type" value="text" />
+                  <span>متن / کد پیگیری</span>
+                </label>
+              </div>
+            </div>
+
+            <div id="image-upload-group" class="form-group">
+              <label for="receipt-image">آپلود تصویر فیش</label>
+              <div class="file-upload">
+                <input type="file" id="receipt-image" accept="image/*" class="file-input" />
+                <label for="receipt-image" class="file-label">
+                  <span class="file-icon">📷</span>
+                  <span class="file-text">انتخاب تصویر یا کشیدن اینجا</span>
+                </label>
+                <div id="image-preview" class="image-preview hidden"></div>
+              </div>
+            </div>
+
+            <div id="text-receipt-group" class="form-group hidden">
+              <label for="receipt-text">متن فیش یا کد پیگیری</label>
+              <textarea id="receipt-text" class="input textarea" rows="4" placeholder="کد پیگیری یا توضیحات فیش را وارد کنید..."></textarea>
+            </div>
+
+            <div id="receipt-error" class="form-error hidden"></div>
+
+            <button type="submit" id="submit-receipt-btn" class="btn btn-primary btn-lg btn-block">
+              ثبت فیش و ادامه
+            </button>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>تمامی حقوق برای برند آتش‌یار محفوظ است.</p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/config.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/pay.js"></script>
+</body>
+</html>
