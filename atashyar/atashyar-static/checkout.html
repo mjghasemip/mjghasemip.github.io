@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>تکمیل سفارش | آتش یار</title>
+  <link rel="icon" href="images/favicon.svg" type="image/svg+xml" />
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <header class="header">
+    <div class="header-inner">
+      <a href="index.html" class="logo">
+        <span class="logo-icon">🔥</span>
+        <div>
+          <span class="logo-text">آتش یار</span>
+          <span class="logo-sub">ATASHYAR</span>
+        </div>
+      </a>
+    </div>
+  </header>
+
+  <main style="padding:2.5rem 0;flex:1">
+    <div class="container-sm">
+      <a href="index.html" class="back-link">→ بازگشت</a>
+      <h1 class="page-title">تکمیل سفارش</h1>
+
+      <div class="summary-card" id="product-summary">
+        <!-- filled by JS -->
+      </div>
+
+      <form id="checkout-form">
+        <p class="hint">تمام فیلدها اختیاری هستند. در صورت تمایل پر کنید.</p>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>نام و نام خانوادگی</label>
+            <input type="text" id="name" placeholder="اختیاری" />
+          </div>
+          <div class="form-group">
+            <label>شماره تماس</label>
+            <input type="tel" id="phone" placeholder="۰۹۱۲xxxxxxx" dir="ltr" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>آدرس</label>
+          <textarea id="address" rows="3" placeholder="آدرس کامل (اختیاری)"></textarea>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>شهر</label>
+            <input type="text" id="city" placeholder="اختیاری" />
+          </div>
+          <div class="form-group">
+            <label>کد پستی</label>
+            <input type="text" id="postalCode" placeholder="اختیاری" dir="ltr" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>توضیحات / یادداشت</label>
+          <textarea id="notes" rows="2" placeholder="هر توضیح اضافی..."></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-full" id="submit-btn">
+          ادامه به پرداخت
+        </button>
+      </form>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div>🔥 <strong>آگنی | آتش یار</strong></div>
+    <p>تمامی حقوق برای برند آگنی محفوظ است.</p>
+  </footer>
+
+  <script src="js/config.js"></script>
+  <script>
+    const params = new URLSearchParams(location.search);
+    const productId = params.get('product');
+    const product = PRODUCTS.find(p => p.id === productId);
+
+    if (!product) {
+      document.querySelector('main').innerHTML = `
+        <div class="container-sm" style="text-align:center;padding:4rem 0">
+          <p style="color:var(--ash);margin-bottom:1rem">محصول یافت نشد</p>
+          <a href="index.html" class="btn btn-dark">بازگشت به صفحه اصلی</a>
+        </div>`;
+    } else {
+      let qty = 1;
+
+      function renderSummary() {
+        const total = product.price * qty;
+        document.getElementById('product-summary').innerHTML = `
+          <h2 style="font-weight:600;margin-bottom:.25rem">${product.name}</h2>
+          <p style="font-size:.85rem;color:var(--ash);margin-bottom:1rem">${product.description}</p>
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <span class="price">${formatPrice(product.price)}</span>
+            <div class="qty-box">
+              <button type="button" class="qty-btn" id="qty-minus">−</button>
+              <span class="qty-val" id="qty-val">${qty}</span>
+              <button type="button" class="qty-btn" id="qty-plus">+</button>
+            </div>
+          </div>
+          <div class="summary-total">
+            <span style="color:var(--ash)">جمع کل</span>
+            <span class="price" id="total-price">${formatPrice(total)}</span>
+          </div>`;
+
+        document.getElementById('qty-minus').onclick = () => { if (qty > 1) { qty--; renderSummary(); updateBtn(); } };
+        document.getElementById('qty-plus').onclick = () => { qty++; renderSummary(); updateBtn(); };
+      }
+
+      function updateBtn() {
+        document.getElementById('submit-btn').textContent =
+          'ادامه به پرداخت — ' + formatPrice(product.price * qty);
+      }
+
+      renderSummary();
+      updateBtn();
+
+      document.getElementById('checkout-form').onsubmit = (e) => {
+        e.preventDefault();
+        const order = {
+          productId: product.id,
+          productName: product.name,
+          quantity: qty,
+          unitPrice: product.price,
+          totalPrice: product.price * qty,
+          name: document.getElementById('name').value.trim(),
+          phone: document.getElementById('phone').value.trim(),
+          address: document.getElementById('address').value.trim(),
+          city: document.getElementById('city').value.trim(),
+          postalCode: document.getElementById('postalCode').value.trim(),
+          notes: document.getElementById('notes').value.trim(),
+        };
+        sessionStorage.setItem('pendingOrder', JSON.stringify(order));
+        location.href = 'payment.html';
+      };
+    }
+  </script>
+</body>
+</html>
