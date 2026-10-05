@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>پنل ادمین | آتش یار</title>
+  <link rel="icon" href="../images/favicon.svg" type="image/svg+xml" />
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+
+  <header class="admin-header">
+    <div style="display:flex;align-items:center;gap:.5rem">
+      <span>🔥</span>
+      <strong>پنل ادمین — آتش یار</strong>
+    </div>
+    <button class="btn btn-sm" style="background:transparent;color:white;border:1px solid rgba(255,255,255,.3)" id="logout-btn">
+      خروج
+    </button>
+  </header>
+
+  <main class="container" style="padding:2rem 1.25rem;flex:1">
+    <div class="admin-filters" id="filters">
+      <button class="filter-btn active" data-filter="all">همه</button>
+      <button class="filter-btn" data-filter="pending">در انتظار</button>
+      <button class="filter-btn" data-filter="approved">تأیید شده</button>
+      <button class="filter-btn" data-filter="rejected">رد شده</button>
+      <button class="filter-btn" id="refresh-btn" style="margin-right:auto">🔄</button>
+    </div>
+
+    <div id="orders-list">
+      <div style="text-align:center;padding:3rem;color:var(--ash)">در حال بارگذاری...</div>
+    </div>
+  </main>
+
+  <!-- Modal -->
+  <div class="modal-overlay hidden" id="modal">
+    <div class="modal">
+      <h3>بررسی سفارش</h3>
+      <div id="modal-body"></div>
+      <div class="form-group" style="margin-top:1rem">
+        <label>یادداشت ادمین (اختیاری)</label>
+        <textarea id="admin-note" rows="2" placeholder="یادداشت..."></textarea>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-green" id="approve-btn">✅ تأیید</button>
+        <button class="btn btn-red" id="reject-btn">❌ رد</button>
+        <button class="btn btn-outline" id="cancel-btn">انصراف</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../js/config.js"></script>
+  <script src="../js/supabase-client.js"></script>
+  <script>
+    let currentFilter = 'all';
+    let selectedOrder = null;
+    const sb = getSupabase();
+
+    // Auth check
+    (async () => {
+      const { data: { session } } = await sb.auth.getSession();
+      if (!session) { location.href = 'index.html'; return; }
+      loadOrders();
+    })();
+
+    document.getElementById('logout-btn').onclick = async () => {
+      await sb.auth.signOut();
+      location.href = 'index.html';
+    };
+
+    // Filters
+    document.querySelectorAll('.filter-btn[data-filter]').forEach(btn => {
+      btn.onclick = () => {
+        document.querySelectorAll('.filter-btn[data-filter]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentFilter = btn.dataset.filter;
+        loadOrders();
+      };
+    });
+    document.getElementById('refresh-btn').onclick = loadOrders;
+
+    async function loadOrders() {
+      const list = document.getElementById('orders-list');
+      list.innerHTML = '<div style="text-align:center;padding:3rem;color:var(--ash)">در حال بارگذاری...</div>';
+
+      let query = sb.from('orders').select('*').order('created_at', { ascending: false });
+      if (currentFilter !== 'all') query = query.eq('status', currentFilter);
+
+      const { data, error } = await query;
+      if (error) {
+        list.innerHTML = `<div class="alert alert-error">${error.message}</div>`;
+        return;
+      }
+      if (!data || data.length === 0) {
+        list.innerHTML = '<div style="text-align:center;padding:3rem;color:var(--ash)">سفارشی یافت نشد</div>';
+        return;
+      }
+
+      list.innerHTML = data.map(o => {
+        const statusClass = { pending: 'status-pending', approved: 'status-approved', rejected: 'status-rejected' }[o.status];
+        const statusLabel = { pending: 'در انتظار', approved: 'تأیید شده', rejected: 'رد شده' }[o.status];
+        return `
+          <div class="order-card">
+            <div class="order-top">
+              <div>
+                <strong>${o.product_name}</strong>
+                <div style="font-size:.85rem;color:var(--ash)">تعداد: ${o.quantity} — ${formatPrice(o.total_price)}</div>
+              </div>
+              <span class="status-badge ${statusClass}">${statusLabel}</span>
+            </div>
+            <div class="order-meta">
+              ${o.customer_name ? `<span>نام: ${o.customer_name}</span>` : ''}
+              ${o.phone ? `<span>تلفن: ${o.phone}</span>` : ''}
+              ${o.city ? `<span>شهر: ${o.city}</span>` : ''}
+              ${o.address ? `<span style="grid-column:1/-1">آدرس: ${o.address}</span>` : ''}
+              ${o.notes ? `<span style="grid-column:1/-1">یادداشت: ${o.notes}</span>` : ''}
+              <span style="font-size:.75rem">${new Date(o.created_at).toLocaleString('fa-IR')}</span>
+            </div>
+            <div class="order-actions">
+              ${o.receipt_url ? `<a href="${o.receipt_url}" target="_blank" class="btn btn-outline btn-sm">👁️ مشاهده فیش</a>` : ''}
+              ${o.status === 'pending' ? `<button class="btn btn-sm btn-green" onclick="openModal('${o.id}')">تأیید / رد</button>` : ''}
+            </div>
+          </div>`;
+      }).join('');
+
+      // store data for modal
+      window._orders = data;
+    }
+
+    window.openModal = function (id) {
+      selectedOrder = window._orders.find(o => o.id === id);
+      if (!selectedOrder) return;
+      document.getElementById('admin-note').value = '';
+      document.getElementById('modal-body').innerHTML = `
+        <p style="font-size:.9rem;color:var(--ash)">${selectedOrder.product_name} × ${selectedOrder.quantity}</p>
+        <p class="price" style="margin:.5rem 0 1rem">${formatPrice(selectedOrder.total_price)}</p>
+        ${selectedOrder.receipt_url ? `<a href="${selectedOrder.receipt_url}" target="_blank"><img src="${selectedOrder.receipt_url}" style="max-height:180px;border-radius:8px;border:1px solid var(--border);margin:0 auto" /></a>` : ''}
+      `;
+      document.getElementById('modal').classList.remove('hidden');
+    };
+
+    document.getElementById('cancel-btn').onclick = () => {
+      document.getElementById('modal').classList.add('hidden');
+      selectedOrder = null;
+    };
+
+    async function updateStatus(status) {
+      if (!selectedOrder) return;
+      const note = document.getElementById('admin-note').value.trim();
+      const { error } = await sb.from('orders').update({
+        status,
+        admin_note: note || null,
+      }).eq('id', selectedOrder.id);
+
+      if (error) { alert(error.message); return; }
+      document.getElementById('modal').classList.add('hidden');
+      selectedOrder = null;
+      loadOrders();
+    }
+
+    document.getElementById('approve-btn').onclick = () => updateStatus('approved');
+    document.getElementById('reject-btn').onclick = () => updateStatus('rejected');
+  </script>
+</body>
+</html>
