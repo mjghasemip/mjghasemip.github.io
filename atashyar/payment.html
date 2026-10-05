@@ -191,7 +191,7 @@
           location.href = 'success.html';
         } catch (err) {
           console.error(err);
-          showError(err.message || 'خطا در ثبت سفارش. لطفاً دوباره تلاش کنید.');
+          showError(translateError(err.message || 'خطا در ثبت سفارش. لطفاً دوباره تلاش کنید.'));
           btn.disabled = false;
           btn.textContent = 'پرداخت کردم — ثبت سفارش';
         }

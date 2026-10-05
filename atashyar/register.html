@@ -95,7 +95,7 @@
         ok.classList.remove('hidden');
         setTimeout(() => location.href = 'account.html', 1200);
       } catch (ex) {
-        err.textContent = ex.message || 'خطا در ثبت‌نام';
+        err.textContent = translateError(ex.message || 'خطا در ثبت‌نام');
         err.classList.remove('hidden');
         btn.disabled = false;
         btn.textContent = 'ثبت‌نام';

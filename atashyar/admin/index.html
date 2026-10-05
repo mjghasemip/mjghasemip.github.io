@@ -63,9 +63,7 @@
       });
 
       if (error) {
-        errBox.textContent = error.message === 'Invalid login credentials'
-          ? 'ایمیل یا رمز عبور اشتباه است'
-          : error.message;
+        errBox.textContent = translateError(error.message);
         errBox.classList.remove('hidden');
         btn.disabled = false;
         btn.textContent = 'ورود';

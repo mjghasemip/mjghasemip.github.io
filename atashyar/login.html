@@ -74,9 +74,7 @@
         const isAdmin = await Auth.isAdmin();
         location.href = isAdmin ? 'admin/dashboard.html' : 'account.html';
       } catch (ex) {
-        err.textContent = ex.message === 'Invalid login credentials'
-          ? 'ایمیل یا رمز عبور اشتباه است'
-          : (ex.message || 'خطا در ورود');
+        err.textContent = translateError(ex.message || 'خطا در ورود');
         err.classList.remove('hidden');
         btn.disabled = false;
         btn.textContent = 'ورود';
