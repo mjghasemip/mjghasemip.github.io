@@ -43,12 +43,31 @@ async function loadProfile() {
       .from('profiles')
       .select('*')
       .eq('id', currentUser.id)
-      .single();
+      .maybeSingle();
 
-    if (error && error.code !== 'PGRST116') {
+    if (error) {
       console.error('Profile load error:', error);
     }
     currentProfile = data || null;
+
+    // If no profile row yet, create one
+    if (!currentProfile) {
+      const fullName =
+        (currentUser.user_metadata && currentUser.user_metadata.full_name) || '';
+      const { data: created, error: insertErr } = await getSb()
+        .from('profiles')
+        .upsert({
+          id: currentUser.id,
+          email: currentUser.email,
+          full_name: fullName,
+          role: 'user',
+        })
+        .select()
+        .maybeSingle();
+      if (insertErr) console.error('Profile create error:', insertErr);
+      currentProfile = created || null;
+    }
+
     return currentProfile;
   } catch (err) {
     console.error('loadProfile error:', err);
@@ -58,7 +77,7 @@ async function loadProfile() {
 }
 
 function isAdmin() {
-  return currentProfile && currentProfile.role === 'admin';
+  return !!(currentProfile && currentProfile.role === 'admin');
 }
 
 async function signUp(email, password, fullName) {
@@ -113,19 +132,33 @@ async function updateAuthUI() {
     if (authButtons) authButtons.classList.add('hidden');
     if (userMenu) userMenu.classList.remove('hidden');
     if (userEmail) userEmail.textContent = currentUser.email;
+
+    // Always try to show/hide admin link based on role
     if (adminLink) {
-      if (isAdmin()) adminLink.classList.remove('hidden');
-      else adminLink.classList.add('hidden');
+      if (isAdmin()) {
+        adminLink.classList.remove('hidden');
+      } else {
+        adminLink.classList.add('hidden');
+      }
     }
+
     if (loginHint) loginHint.classList.add('hidden');
   } else {
     if (authButtons) authButtons.classList.remove('hidden');
     if (userMenu) userMenu.classList.add('hidden');
+    if (adminLink) adminLink.classList.add('hidden');
     if (loginHint) loginHint.classList.remove('hidden');
   }
 
   if (logoutBtn) {
-    logoutBtn.onclick = () => signOut();
+    logoutBtn.onclick = function () {
+      signOut();
+    };
+  }
+
+  // Debug helper in console
+  if (currentUser) {
+    console.log('[auth] user:', currentUser.email, '| role:', currentProfile && currentProfile.role);
   }
 }
 
@@ -144,6 +177,7 @@ async function requireAdmin() {
   if (!ok) return false;
   await loadProfile();
   if (!isAdmin()) {
+    alert('شما دسترسی ادمین ندارید.\nاگر ادمین هستید یک‌بار خارج شوید و دوباره وارد شوید.\nrole فعلی: ' + ((currentProfile && currentProfile.role) || 'نامشخص'));
     window.location.href = 'index.html';
     return false;
   }
