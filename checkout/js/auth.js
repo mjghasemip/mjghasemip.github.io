@@ -80,16 +80,24 @@ function isAdmin() {
   return !!(currentProfile && currentProfile.role === 'admin');
 }
 
-async function signUp(email, password, fullName) {
+async function signUp(email, password, fullName, phone, profession) {
+  phone = phone || '';
+  profession = profession || '';
   const { data, error } = await getSb().auth.signUp({
     email,
     password,
     options: {
-      data: { full_name: fullName },
+      data: {
+        full_name: fullName,
+        phone: phone,
+        profession: profession,
+      },
     },
   });
   if (error) throw error;
 
+  // پروفایل: بدون تغییر اسکیما — نام + ایمیل ساختگی
+  // profession فقط در user_metadata می‌ماند
   if (data.user) {
     await getSb().from('profiles').upsert({
       id: data.user.id,
@@ -131,7 +139,10 @@ async function updateAuthUI() {
   if (currentUser) {
     if (authButtons) authButtons.classList.add('hidden');
     if (userMenu) userMenu.classList.remove('hidden');
-    if (userEmail) userEmail.textContent = currentUser.email;
+    if (userEmail) {
+      var meta = currentUser.user_metadata || {};
+      userEmail.textContent = meta.phone || currentUser.email;
+    }
 
     // Always try to show/hide admin link based on role
     if (adminLink) {

@@ -40,12 +40,10 @@
           <form id="login-form" class="auth-form">
             <h2 class="card-title">ورود به حساب</h2>
             <div class="form-group">
-              <label for="login-email">ایمیل</label>
-              <input type="email" id="login-email" class="input" required placeholder="example@email.com" dir="ltr" />
-            </div>
-            <div class="form-group">
-              <label for="login-password">رمز عبور</label>
-              <input type="password" id="login-password" class="input" required minlength="6" placeholder="حداقل ۶ کاراکتر" dir="ltr" />
+              <label for="login-phone">شماره موبایل</label>
+              <input type="tel" id="login-phone" class="input" required
+                placeholder="09121234567" dir="ltr" inputmode="numeric"
+                autocomplete="tel" maxlength="11" />
             </div>
             <div id="login-error" class="form-error hidden"></div>
             <button type="submit" class="btn btn-primary btn-block">ورود</button>
@@ -59,16 +57,18 @@
               <input type="text" id="register-name" class="input" required placeholder="نام کامل" />
             </div>
             <div class="form-group">
-              <label for="register-email">ایمیل</label>
-              <input type="email" id="register-email" class="input" required placeholder="example@email.com" dir="ltr" />
+              <label for="register-phone">شماره موبایل</label>
+              <input type="tel" id="register-phone" class="input" required
+                placeholder="09121234567" dir="ltr" inputmode="numeric"
+                autocomplete="tel" maxlength="11" />
             </div>
             <div class="form-group">
-              <label for="register-password">رمز عبور</label>
-              <input type="password" id="register-password" class="input" required minlength="6" placeholder="حداقل ۶ کاراکتر" dir="ltr" />
+              <label for="register-profession">حرفه <span class="label-optional">(اختیاری)</span></label>
+              <input type="text" id="register-profession" class="input" placeholder="مثلاً پزشک، مهندس، ..." />
             </div>
             <div id="register-error" class="form-error hidden"></div>
             <button type="submit" class="btn btn-primary btn-block">ثبت‌نام</button>
-            <p class="form-hint">نیازی به تأیید ایمیل نیست. بلافاصله وارد می‌شوید.</p>
+            <p class="form-hint">فقط با شماره موبایل وارد می‌شوید. نیازی به ایمیل نیست.</p>
           </form>
         </div>
       </div>

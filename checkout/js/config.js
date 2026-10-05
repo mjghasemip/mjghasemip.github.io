@@ -13,6 +13,10 @@ const CONFIG = {
 
   // Storage bucket for receipts
   RECEIPTS_BUCKET: 'receipts',
+
+  // دامنه ساختگی برای ورود با موبایل (بدون تغییر دیتابیس)
+  PHONE_EMAIL_DOMAIN: 'phone.local',
+
 };
 
 // Format number with Persian separators
@@ -52,3 +56,26 @@ const STATUS_LABELS = {
   approved: 'تأیید شده',
   rejected: 'رد شده',
 };
+
+// نرمال‌سازی شماره موبایل ایران (فقط رقم، با 09)
+function normalizePhone(raw) {
+  if (!raw) return '';
+  var s = String(raw).replace(/\D/g, '');
+  if (s.indexOf('98') === 0 && s.length === 12) s = '0' + s.slice(2);
+  if (s.indexOf('9') === 0 && s.length === 10) s = '0' + s;
+  return s;
+}
+
+function isValidIranMobile(phone) {
+  return /^09\d{9}$/.test(phone);
+}
+
+// ایمیل ساختگی از شماره: 0912...@phone.local
+function phoneToEmail(phone) {
+  return normalizePhone(phone) + '@' + CONFIG.PHONE_EMAIL_DOMAIN;
+}
+
+// رمز عبور از روی شماره (بدون فیلد جدا)
+function phoneToPassword(phone) {
+  return 'p_' + normalizePhone(phone) + '_atash';
+}
