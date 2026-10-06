@@ -153,7 +153,7 @@ async function openPaymentModal(id) {
   }
 
   body.innerHTML = `
-    <p><strong>کاربر:</strong> ${escapeHtml(userName)} (${escapeHtml(userEmail)})</p>
+    <p><strong>کاربر:</strong> ${escapeHtml(userName)} (<bdi dir="ltr">${escapeHtml(userEmail)}</bdi>)</p>
     <p><strong>مبلغ:</strong> <span style="direction: rtl; display: inline-block;">${formatNumber(p.amount_toman)} تومان</span></p>
     <p><strong>وضعیت:</strong> <span class="status-badge ${p.status}">${STATUS_LABELS[p.status]}</span></p>
     <p><strong>تاریخ ثبت:</strong> ${formatDate(p.created_at)}</p>
@@ -237,7 +237,7 @@ async function loadUsers() {
       <div class="admin-item-header">
         <div>
           <div style="font-weight: 600;">${escapeHtml(u.full_name || '—')}</div>
-          <div class="admin-item-meta">${escapeHtml(u.email)} · ${formatDate(u.created_at)}</div>
+          <div class="admin-item-meta"><bdi dir="ltr">${escapeHtml(u.email)}</bdi> · ${formatDate(u.created_at)}</div>
         </div>
         <span class="status-badge ${u.role === 'admin' ? 'approved' : 'pending'}">${u.role === 'admin' ? 'ادمین' : 'کاربر'}</span>
       </div>
