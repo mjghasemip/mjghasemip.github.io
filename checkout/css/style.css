@@ -220,6 +220,27 @@ body {
   color: var(--accent);
 }
 
+/* Active nav item: themed glow */
+.header .btn.active,
+.header .btn.active:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--accent) 45%, transparent),
+    0 0 12px color-mix(in srgb, var(--accent) 45%, transparent),
+    inset 0 0 8px color-mix(in srgb, var(--accent) 18%, transparent);
+  font-weight: 600;
+}
+
+[data-theme="dark"] .header .btn.active {
+  text-shadow: 0 0 8px color-mix(in srgb, var(--accent) 70%, transparent);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--accent) 55%, transparent),
+    0 0 16px color-mix(in srgb, var(--accent) 55%, transparent),
+    inset 0 0 10px color-mix(in srgb, var(--accent) 22%, transparent);
+}
+
 .btn-ghost {
   background: transparent;
   color: var(--text-secondary);
